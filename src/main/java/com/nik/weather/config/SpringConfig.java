@@ -1,6 +1,7 @@
 package com.nik.weather.config;
 
 
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -49,4 +50,6 @@ public class SpringConfig implements WebMvcConfigurer {
         viewResolver.setTemplateEngine(templateEngine());
         registry.viewResolver(viewResolver);
     }
+
+
 }
