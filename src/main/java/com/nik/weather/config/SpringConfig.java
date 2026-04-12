@@ -66,7 +66,7 @@ public class SpringConfig implements WebMvcConfigurer {
     @Bean(initMethod = "migrate")
     public Flyway flyway() {
         return Flyway.configure()
-                .dataSource("jdbc:postgresql://localhost:5432/postgres", "postgres", "pass")
+                .dataSource("jdbc:postgresql://localhost:5432/weather1", "postgres", "pass")
                 .load();
     }
 }
