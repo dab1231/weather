@@ -7,6 +7,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.orm.jpa.hibernate.LocalSessionFactoryBean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -51,5 +53,11 @@ public class SpringConfig implements WebMvcConfigurer {
         registry.viewResolver(viewResolver);
     }
 
-
+    @Bean
+    public LocalSessionFactoryBean sessionFactoryBean() {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setConfigLocation(new ClassPathResource("hibernate.cfg.xml"));
+        sessionFactory.setPackagesToScan("com.nik.weather.entity");
+        return sessionFactory;
+    }
 }
