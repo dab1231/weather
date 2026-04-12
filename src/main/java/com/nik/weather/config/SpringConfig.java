@@ -1,12 +1,13 @@
 package com.nik.weather.config;
 
 
-import org.hibernate.SessionFactory;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.orm.jpa.hibernate.LocalSessionFactoryBean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -53,11 +54,19 @@ public class SpringConfig implements WebMvcConfigurer {
         registry.viewResolver(viewResolver);
     }
 
+    @DependsOn("flyway")
     @Bean
     public LocalSessionFactoryBean sessionFactoryBean() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setConfigLocation(new ClassPathResource("hibernate.cfg.xml"));
         sessionFactory.setPackagesToScan("com.nik.weather.entity");
         return sessionFactory;
+    }
+
+    @Bean(initMethod = "migrate")
+    public Flyway flyway() {
+        return Flyway.configure()
+                .dataSource("jdbc:postgresql://localhost:5432/postgres", "postgres", "pass")
+                .load();
     }
 }
