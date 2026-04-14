@@ -22,7 +22,7 @@ public class Location {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     private User user;
 
