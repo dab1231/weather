@@ -9,14 +9,15 @@ create table locations
 (
     id SERIAL primary key ,
     name VARCHAR(128) NOT NULL ,
-    user_id INT REFERENCES users,
+    user_id INT REFERENCES users ON DELETE CASCADE ,
     latitude DECIMAL(9,6),
-    longitude DECIMAL(9,6)
+    longitude DECIMAL(9,6),
+    UNIQUE(name, user_id)
 );
 
 create table sessions
 (
     id uuid primary key ,
-    user_id INT REFERENCES users,
+    user_id INT REFERENCES users ON DELETE CASCADE,
     expires_at timestamp
 );

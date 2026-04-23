@@ -12,7 +12,9 @@ import java.math.BigDecimal;
 @EqualsAndHashCode
 @ToString
 @Entity
-@Table(name = "locations", schema = "public")
+@Table(name = "locations", schema = "public", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"name", "user_id"})
+})
 public class Location {
 
     @Id
