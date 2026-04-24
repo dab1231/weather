@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Component
 public class UserDao {
 
@@ -22,5 +24,14 @@ public class UserDao {
         Session session = sessionFactory.getCurrentSession();
         session.persist(user);
 
+    }
+
+    @Transactional
+    public Optional<User> findByLogin(String login) {
+        Session session = sessionFactory.getCurrentSession();
+        User maybeUser = session.createQuery("FROM User WHERE login = :login", User.class)
+                .setParameter("login", login)
+                .uniqueResult();
+        return Optional.ofNullable(maybeUser);
     }
 }
