@@ -1,43 +1,42 @@
 package com.nik.weather.dao;
 
-
-import com.nik.weather.entity.SessionEntity;
+import com.nik.weather.entity.Location;
+import com.nik.weather.entity.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.List;
 
 @Component
-public class SessionDao {
+public class LocationDao {
 
     private final SessionFactory sessionFactory;
 
     @Autowired
-    private SessionDao(SessionFactory sessionFactory) {
+    public LocationDao(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
     @Transactional
-    public void createSession(SessionEntity sessionEntity) {
+    public void save(Location location) {
         Session currentSession = sessionFactory.getCurrentSession();
-        currentSession.persist(sessionEntity);
+        currentSession.persist(location);
     }
 
     @Transactional
-    public Optional<SessionEntity> findById(UUID id) {
+    public void delete(Location location) {
         Session currentSession = sessionFactory.getCurrentSession();
-        SessionEntity sessionFromDB = currentSession.find(SessionEntity.class, id);
-        return Optional.ofNullable(sessionFromDB);
+        currentSession.remove(location);
     }
 
     @Transactional
-    public void deleteById(UUID id) {
+    public List<Location> findByUser(User user) {
         Session currentSession = sessionFactory.getCurrentSession();
-        Optional<SessionEntity> maybeSession = findById(id);
-        maybeSession.ifPresent(currentSession::remove);
+        return currentSession.createQuery("FROM Location WHERE user = :user", Location.class)
+                .setParameter("user", user)
+                .getResultList();
     }
 }
