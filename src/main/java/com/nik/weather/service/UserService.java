@@ -1,8 +1,12 @@
 package com.nik.weather.service;
 
 import com.nik.weather.dao.UserDao;
-import com.nik.weather.dto.request.UserRegistrationReqDto;
+import com.nik.weather.dto.request.UserReqDto;
+import com.nik.weather.entity.SessionEntity;
 import com.nik.weather.entity.User;
+import com.nik.weather.exception.InvalidLoginException;
+import com.nik.weather.exception.InvalidPasswordException;
+import com.nik.weather.exception.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -21,11 +25,11 @@ public class UserService {
     }
 
     @Transactional
-    public void registration(UserRegistrationReqDto userRegistrationReqDto) {
+    public void registration(UserReqDto userRegistrationReqDto) {
         var maybeUser = userDao.findByLogin(userRegistrationReqDto.login());
 
         if (maybeUser.isPresent()) {
-            //todo создать кастомную ошибку (user already exists) и бросить
+            throw new UserAlreadyExistsException();
         }
 
         String password = userRegistrationReqDto.password();
@@ -39,5 +43,22 @@ public class UserService {
         userDao.save(user);
     }
 
-
+    @Transactional
+    public SessionEntity login(UserReqDto userReqDto) {
+        var maybeUser = userDao.findByLogin(userReqDto.login());
+        if(maybeUser.isPresent()) {
+            User userFromDB = maybeUser.get();
+            boolean match = passwordEncoder.matches(userReqDto.password(), userFromDB.getPassword());
+            if(match) {
+                //todo создаем сессию через SessionService
+            }
+            else{
+                throw new InvalidPasswordException();
+            }
+        }
+        else {
+            throw new InvalidLoginException();
+        }
+        //todo return сессии
+    }
 }
