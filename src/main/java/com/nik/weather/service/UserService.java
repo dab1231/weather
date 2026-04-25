@@ -9,10 +9,10 @@ import com.nik.weather.exception.InvalidPasswordException;
 import com.nik.weather.exception.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Service
 public class UserService {
 
     private final UserDao userDao;
