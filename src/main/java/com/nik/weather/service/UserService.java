@@ -2,7 +2,7 @@ package com.nik.weather.service;
 
 import com.nik.weather.dao.UserDao;
 import com.nik.weather.dto.request.UserReqDto;
-import com.nik.weather.entity.SessionEntity;
+import com.nik.weather.dto.response.SessionRespDto;
 import com.nik.weather.entity.User;
 import com.nik.weather.exception.InvalidLoginException;
 import com.nik.weather.exception.InvalidPasswordException;
@@ -17,11 +17,13 @@ public class UserService {
 
     private final UserDao userDao;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final SessionService sessionService;
 
     @Autowired
-    private UserService(UserDao userDao, BCryptPasswordEncoder passwordEncoder) {
+    private UserService(UserDao userDao, BCryptPasswordEncoder passwordEncoder, SessionService sessionService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
+        this.sessionService = sessionService;
     }
 
     @Transactional
@@ -44,13 +46,15 @@ public class UserService {
     }
 
     @Transactional
-    public SessionEntity login(UserReqDto userReqDto) {
+    public SessionRespDto login(UserReqDto userReqDto) {
         var maybeUser = userDao.findByLogin(userReqDto.login());
         if(maybeUser.isPresent()) {
             User userFromDB = maybeUser.get();
             boolean match = passwordEncoder.matches(userReqDto.password(), userFromDB.getPassword());
+
             if(match) {
-                //todo создаем сессию через SessionService
+                var session = sessionService.createSession(userFromDB);
+                return new SessionRespDto(session.getId(), session.getExpiresAt());
             }
             else{
                 throw new InvalidPasswordException();
@@ -59,6 +63,5 @@ public class UserService {
         else {
             throw new InvalidLoginException();
         }
-        //todo return сессии
     }
 }

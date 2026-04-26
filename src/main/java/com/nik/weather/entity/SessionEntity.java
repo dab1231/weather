@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Builder
 @Entity
 @Table(name = "sessions", schema = "public")
 public class SessionEntity {
