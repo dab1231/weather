@@ -1,7 +1,6 @@
 package com.nik.weather.service;
 
 import com.nik.weather.dao.LocationDao;
-import com.nik.weather.dao.UserDao;
 import com.nik.weather.dto.request.LocationReqDto;
 import com.nik.weather.entity.Location;
 import com.nik.weather.entity.User;
@@ -11,20 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class LocationService {
 
     private final LocationDao locationDao;
-    private final UserDao userDao;
 
     @Autowired
-    private LocationService(LocationDao locationDao, UserDao userDao) {
+    private LocationService(LocationDao locationDao) {
         this.locationDao = locationDao;
-        this.userDao = userDao;
     }
 
     @Transactional
