@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Builder
 @Entity
 @Table(name = "locations", schema = "public", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"name", "user_id"})

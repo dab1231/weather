@@ -5,12 +5,13 @@ import com.nik.weather.dto.request.SessionReqDto;
 import com.nik.weather.dto.response.SessionRespDto;
 import com.nik.weather.entity.SessionEntity;
 import com.nik.weather.entity.User;
+import com.nik.weather.exception.SessionExpiredException;
+import com.nik.weather.exception.SessionNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class SessionService {
@@ -47,11 +48,11 @@ public class SessionService {
             }
             else {
                 sessionDao.deleteById(sessionEntity.getId());
-                //todo ошибка сессия истекла
+                throw new SessionExpiredException();
             }
         }
         else {
-            //todo ошибка сессии не существует
+            throw new SessionNotFoundException();
         }
     }
 

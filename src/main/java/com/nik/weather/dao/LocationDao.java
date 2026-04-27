@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class LocationDao {
@@ -27,8 +28,9 @@ public class LocationDao {
     }
 
     @Transactional
-    public void delete(Location location) {
+    public void delete(Long id) {
         Session currentSession = sessionFactory.getCurrentSession();
+        var location = currentSession.find(Location.class, id);
         currentSession.remove(location);
     }
 
@@ -38,5 +40,11 @@ public class LocationDao {
         return currentSession.createQuery("FROM Location WHERE user = :user", Location.class)
                 .setParameter("user", user)
                 .getResultList();
+    }
+
+    @Transactional
+    public Optional<Location> findById(Long id) {
+        Session currentSession = sessionFactory.getCurrentSession();
+        return Optional.ofNullable(currentSession.find(Location.class, id));
     }
 }
