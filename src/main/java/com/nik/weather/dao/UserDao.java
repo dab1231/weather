@@ -34,4 +34,11 @@ public class UserDao {
                 .uniqueResult();
         return Optional.ofNullable(maybeUser);
     }
+
+    @Transactional
+    public Optional<User> findById(Long id) {
+        var currentSession = sessionFactory.getCurrentSession();
+        var user = currentSession.find(User.class, id);
+        return Optional.ofNullable(user);
+    }
 }
