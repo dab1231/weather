@@ -19,7 +19,7 @@ public class UserController {
 
     @GetMapping("/sign-up")
     public String registration() {
-        return "sign-up";
+        return "sign-up-with-errors";
     }
 
 
