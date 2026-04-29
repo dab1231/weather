@@ -20,7 +20,7 @@ public class UserService {
     private final SessionService sessionService;
 
     @Autowired
-    private UserService(UserDao userDao, BCryptPasswordEncoder passwordEncoder, SessionService sessionService) {
+    public UserService(UserDao userDao, BCryptPasswordEncoder passwordEncoder, SessionService sessionService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.sessionService = sessionService;

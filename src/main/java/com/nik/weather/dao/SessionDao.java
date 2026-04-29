@@ -17,7 +17,7 @@ public class SessionDao {
     private final SessionFactory sessionFactory;
 
     @Autowired
-    private SessionDao(SessionFactory sessionFactory) {
+    public SessionDao(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 

@@ -18,7 +18,7 @@ public class SessionService {
     private final SessionDao sessionDao;
 
     @Autowired
-    private SessionService(SessionDao sessionDao) {
+    public SessionService(SessionDao sessionDao) {
         this.sessionDao = sessionDao;
     }
 

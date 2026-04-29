@@ -22,7 +22,7 @@ public class UserController {
     private final UserService userService;
 
     @Autowired
-    private UserController(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -65,7 +65,7 @@ public class UserController {
             var cookie = new Cookie("session_id", sessionRespDto.id().toString());
             cookie.setMaxAge(24 * 60 * 60);
             httpServletResponse.addCookie(cookie);
-            return "redirect:/home";
+            return "redirect:/index";
         } catch (InvalidPasswordException e) {
             model.addAttribute("error", "Invalid password");
             return "sign-in";
