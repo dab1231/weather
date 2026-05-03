@@ -1,7 +1,10 @@
 package com.nik.weather.service;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.nik.weather.dto.response.CitiesRespDto;
+import com.nik.weather.exception.WeatherApiException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,25 +17,28 @@ import java.net.http.HttpResponse;
 @Service
 public class WeatherService {
 
-//    @Value("${openweather.api.key}")
+    @Value("${openweather.api.key}")
     private String apiKey;
     private final Gson gson;
 
-    public WeatherService(Gson gson, String apiKey) {
+    @Autowired
+    public WeatherService(Gson gson) {
         this.gson = gson;
-        this.apiKey = apiKey;
     }
 
-    public CitiesRespDto[] findCity(String cityName) throws IOException, InterruptedException {
+    public CitiesRespDto[] findCity(String cityName) {
 
-        var httpClient = HttpClient.newHttpClient();
-        var request = HttpRequest.newBuilder(
-                URI.create("http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=5&appid=" + apiKey)).build();
-        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.body());
-        var respString = response.body();
+        try {
+            var httpClient = HttpClient.newHttpClient();
+            var request = HttpRequest.newBuilder(
+                    URI.create("http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=5&appid=" + apiKey)).build();
+            var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            var respString = response.body();
 
-        var citiesRespDto = gson.fromJson(respString, CitiesRespDto[].class);
-        return citiesRespDto;
+            return gson.fromJson(respString, CitiesRespDto[].class);
+
+        } catch (IOException | InterruptedException | JsonSyntaxException e) {
+            throw new WeatherApiException();
+        }
     }
 }
