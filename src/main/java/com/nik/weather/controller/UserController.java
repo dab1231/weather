@@ -64,6 +64,7 @@ public class UserController {
             var sessionRespDto = userService.login(userReqDto);
             var cookie = new Cookie("session_id", sessionRespDto.id().toString());
             cookie.setMaxAge(24 * 60 * 60);
+            cookie.setPath("/");
             cookie.setHttpOnly(true);
             httpServletResponse.addCookie(cookie);
             return "redirect:/home";
