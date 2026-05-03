@@ -14,20 +14,22 @@ import java.net.http.HttpResponse;
 @Service
 public class WeatherService {
 
-    @Value("${openweather.api.key}")
-    private final String apiKey;
+//    @Value("${openweather.api.key}")
+    private String apiKey;
     private final Gson gson;
 
-    public WeatherService(Gson gson) {
+    public WeatherService(Gson gson, String apiKey) {
         this.gson = gson;
+        this.apiKey = apiKey;
     }
 
     public CitiesRespDto[] findCity(String cityName) throws IOException, InterruptedException {
 
         var httpClient = HttpClient.newHttpClient();
         var request = HttpRequest.newBuilder(
-                URI.create("http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=5&appid={API key}")).build();
+                URI.create("http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=5&appid=" + apiKey)).build();
         var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println(response.body());
         var respString = response.body();
 
         var citiesRespDto = gson.fromJson(respString, CitiesRespDto[].class);
