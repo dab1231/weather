@@ -50,9 +50,14 @@ public class LocationsController {
     }
 
     @GetMapping("/search")
-    public String searchLocations(@RequestParam String cityName,
+    public String searchLocations(
+            @CookieValue(value = "session_id", required = false) String sessionId,
+            @RequestParam String cityName,
                                   Model model) {
 
+        if(sessionId == null) {
+            return "redirect:/user/sign-in";
+        }
         var cities = weatherService.findCity(cityName);
         model.addAttribute("citiesDto", cities);
         return "search-results";

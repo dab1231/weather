@@ -28,7 +28,7 @@ import java.util.Objects;
 @Configuration
 @EnableWebMvc
 @ComponentScan("com.nik.weather")
-@PropertySource("src/main/resources/application.properties")
+@PropertySource("classpath:application.properties")
 public class SpringConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
