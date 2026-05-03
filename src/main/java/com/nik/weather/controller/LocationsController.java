@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Controller
@@ -53,7 +54,7 @@ public class LocationsController {
     public String searchLocations(
             @CookieValue(value = "session_id", required = false) String sessionId,
             @RequestParam String cityName,
-                                  Model model) {
+                                  Model model) throws IOException, InterruptedException {
 
         if(sessionId == null) {
             return "redirect:/user/sign-in";
