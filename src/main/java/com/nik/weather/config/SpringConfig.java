@@ -1,13 +1,11 @@
 package com.nik.weather.config;
 
 
+import com.google.gson.Gson;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.hibernate.HibernateTransactionManager;
@@ -29,6 +27,7 @@ import java.util.Objects;
 @Configuration
 @EnableWebMvc
 @ComponentScan("com.nik.weather")
+@PropertySource("src/main/resources/application.properties")
 public class SpringConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
@@ -104,5 +103,10 @@ public class SpringConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/resources/**")
                 .addResourceLocations("/resources/");
+    }
+
+    @Bean
+    public Gson gson() {
+        return  new Gson();
     }
 }
