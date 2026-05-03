@@ -84,6 +84,7 @@
                 <configuration>
                     <source>16</source>
                     <target>16</target>
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
         </plugins>

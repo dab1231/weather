@@ -65,7 +65,7 @@ public class UserController {
             var cookie = new Cookie("session_id", sessionRespDto.id().toString());
             cookie.setMaxAge(24 * 60 * 60);
             httpServletResponse.addCookie(cookie);
-            return "redirect:/index";
+            return "redirect:/home";
         } catch (InvalidPasswordException e) {
             model.addAttribute("error", "Invalid password");
             return "sign-in";
