@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class SessionService {
@@ -33,9 +34,9 @@ public class SessionService {
     }
 
     @Transactional
-    public SessionEntity findById(SessionReqDto sessionReqDto) {
+    public SessionEntity findById(UUID id) {
 
-        var maybeSession = sessionDao.findById(sessionReqDto.id());
+        var maybeSession = sessionDao.findById(id);
         if (maybeSession.isPresent()) {
             var sessionEntity = maybeSession.get();
             if(sessionEntity.getExpiresAt().isAfter(LocalDateTime.now())) {
