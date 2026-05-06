@@ -13,8 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Controller
@@ -45,11 +43,13 @@ public class LocationsController {
             var user = session.getUser();
             var usersLocations = locationService.getUserLocations(user);
 
-            for(Location location : usersLocations) {
-
+            var locationsWithWeather = new java.util.LinkedHashMap<Location, WeatherRespDto>();
+            for (Location location : usersLocations) {
                 var weather = weatherService.getWeather(location.getLatitude(), location.getLongitude());
-                model.addAttribute(location.getName(), weather);
+                locationsWithWeather.put(location, weather);
             }
+            model.addAttribute("locations", locationsWithWeather);
+
         } catch (SessionExpiredException | SessionNotFoundException e) {
             return "redirect:/user/sign-in";
         }

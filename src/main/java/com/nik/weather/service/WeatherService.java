@@ -51,7 +51,7 @@ public class WeatherService {
 
         try {
             var httpRequest = HttpRequest.newBuilder(
-                    URI.create("https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey)
+                    URI.create("https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=metric")
             ).build();
 
             var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());

@@ -1,9 +1,11 @@
 package com.nik.weather.dto.response;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 public class WeatherRespDto {
     private Main main;
     private List<Weather> weather;
