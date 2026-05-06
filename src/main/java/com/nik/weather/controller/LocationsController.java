@@ -110,5 +110,4 @@ public class LocationsController {
             return "redirect:/user/sign-in";
         }
     }
-
 }
