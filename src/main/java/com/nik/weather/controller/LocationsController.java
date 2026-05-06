@@ -3,8 +3,10 @@ package com.nik.weather.controller;
 import com.nik.weather.dto.request.LocationReqDto;
 import com.nik.weather.dto.response.WeatherRespDto;
 import com.nik.weather.entity.Location;
+import com.nik.weather.exception.LocationNotFoundException;
 import com.nik.weather.exception.SessionExpiredException;
 import com.nik.weather.exception.SessionNotFoundException;
+import com.nik.weather.exception.UnauthorizedAccessDeniedException;
 import com.nik.weather.service.LocationService;
 import com.nik.weather.service.SessionService;
 import com.nik.weather.service.WeatherService;
@@ -36,7 +38,7 @@ public class LocationsController {
             Model model) {
 
         try {
-            if(sessionId == null) {
+            if (sessionId == null) {
                 return "redirect:/user/sign-in";
             }
             var session = sessionService.findById(UUID.fromString(sessionId));
@@ -60,9 +62,9 @@ public class LocationsController {
     public String searchLocations(
             @CookieValue(value = "session_id", required = false) String sessionId,
             @RequestParam String cityName,
-                                  Model model) {
+            Model model) {
 
-        if(sessionId == null) {
+        if (sessionId == null) {
             return "redirect:/user/sign-in";
         }
         var cities = weatherService.findCity(cityName);
@@ -75,7 +77,7 @@ public class LocationsController {
             @CookieValue(value = "session_id", required = false) String sessionId,
             @ModelAttribute LocationReqDto locationReqDto) {
 
-        if(sessionId == null) {
+        if (sessionId == null) {
             return "redirect:/user/sign-in";
         }
 
@@ -87,6 +89,26 @@ public class LocationsController {
             return "redirect:/user/sign-in";
         }
         return "redirect:/home";
+    }
+
+    @PostMapping("/delete")
+    public String deleteLocation(
+            @CookieValue(value = "session_id", required = false) String sessionId,
+            @RequestParam String cityName) {
+
+        if (sessionId == null) {
+            return "redirect:/user/sign-in";
+        }
+        try {
+            var session = sessionService.findById(UUID.fromString(sessionId));
+            var user = session.getUser();
+            var userLocation = locationService.getUserLocation(user, cityName);
+            locationService.deleteLocation(userLocation.getId(), user);
+            return "redirect:/home";
+        } catch (SessionExpiredException | SessionNotFoundException | UnauthorizedAccessDeniedException |
+                 LocationNotFoundException e) {
+            return "redirect:/user/sign-in";
+        }
     }
 
 }

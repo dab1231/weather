@@ -1,29 +1,30 @@
 package com.nik.weather.controller;
 
+import com.nik.weather.dto.request.SessionReqDto;
 import com.nik.weather.dto.request.UserReqDto;
-import com.nik.weather.exception.InvalidLoginException;
-import com.nik.weather.exception.InvalidPasswordException;
-import com.nik.weather.exception.UserAlreadyExistsException;
+import com.nik.weather.exception.*;
+import com.nik.weather.service.SessionService;
 import com.nik.weather.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
+    private final SessionService sessionService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, SessionService sessionService) {
         this.userService = userService;
+        this.sessionService = sessionService;
     }
 
     @GetMapping("/sign-up")
@@ -40,8 +41,7 @@ public class UserController {
         try {
             userService.registration(userReqDto);
             return "redirect:/user/sign-in";
-        }
-        catch (UserAlreadyExistsException e) {
+        } catch (UserAlreadyExistsException e) {
             model.addAttribute("error", "User already exists");
             return "sign-up";
         }
@@ -74,6 +74,25 @@ public class UserController {
         } catch (InvalidLoginException e) {
             model.addAttribute("error", "Invalid username");
             return "sign-in";
+        }
+    }
+
+    @PostMapping("/sign-out")
+    public String logOut(
+            @CookieValue(value = "session_id", required = false) String sessionId) {
+
+        try {
+            if(sessionId == null) {
+                return "redirect:/user/sign-in";
+            }
+
+            var session = sessionService.findById(UUID.fromString(sessionId));
+            sessionService.deleteSession(
+                    new SessionReqDto(session.getId(), session.getExpiresAt())
+            );
+            return "redirect:/user/sign-in";
+        } catch (SessionExpiredException | SessionNotFoundException e) {
+            return "redirect:/user/sign-in";
         }
     }
 }

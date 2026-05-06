@@ -54,4 +54,9 @@ public class LocationService {
     public List<Location> getUserLocations(User user) {
         return locationDao.findByUser(user);
     }
+
+    @Transactional
+    public Location getUserLocation(User user, String cityName) {
+        return locationDao.findByUserAndName(user, cityName);
+    }
 }

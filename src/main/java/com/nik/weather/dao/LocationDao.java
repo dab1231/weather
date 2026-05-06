@@ -47,4 +47,13 @@ public class LocationDao {
         Session currentSession = sessionFactory.getCurrentSession();
         return Optional.ofNullable(currentSession.find(Location.class, id));
     }
+
+    @Transactional
+    public Location findByUserAndName(User user, String cityName) {
+        var currentSession = sessionFactory.getCurrentSession();
+        return currentSession.createQuery("FROM Location WHERE user = :user AND name = :cityName", Location.class)
+                .setParameter("user", user)
+                .setParameter("cityName", cityName)
+                .uniqueResult();
+    }
 }
