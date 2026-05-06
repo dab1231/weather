@@ -1,5 +1,6 @@
 package com.nik.weather.controller;
 
+import com.nik.weather.dto.request.LocationReqDto;
 import com.nik.weather.exception.SessionExpiredException;
 import com.nik.weather.exception.SessionNotFoundException;
 import com.nik.weather.service.LocationService;
@@ -8,10 +9,7 @@ import com.nik.weather.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -63,4 +61,24 @@ public class LocationsController {
         model.addAttribute("citiesDto", cities);
         return "search-results";
     }
+
+    @PostMapping("/search")
+    public String addLocation(
+            @CookieValue(value = "session_id", required = false) String sessionId,
+            @ModelAttribute LocationReqDto locationReqDto) {
+
+        if(sessionId == null) {
+            return "redirect:/user/sign-in";
+        }
+
+        try {
+            var session = sessionService.findById(UUID.fromString(sessionId));
+            locationService.addLocation(session.getUser(), locationReqDto);
+
+        } catch (SessionExpiredException | SessionNotFoundException e) {
+            return "redirect:/user/sign-in";
+        }
+        return "redirect:/home";
+    }
+
 }
