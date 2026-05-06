@@ -1,6 +1,8 @@
 package com.nik.weather.controller;
 
 import com.nik.weather.dto.request.LocationReqDto;
+import com.nik.weather.dto.response.WeatherRespDto;
+import com.nik.weather.entity.Location;
 import com.nik.weather.exception.SessionExpiredException;
 import com.nik.weather.exception.SessionNotFoundException;
 import com.nik.weather.service.LocationService;
@@ -12,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Controller
@@ -41,7 +44,12 @@ public class LocationsController {
             var session = sessionService.findById(UUID.fromString(sessionId));
             var user = session.getUser();
             var usersLocations = locationService.getUserLocations(user);
-            model.addAttribute("locations", usersLocations);
+
+            for(Location location : usersLocations) {
+
+                var weather = weatherService.getWeather(location.getLatitude(), location.getLongitude());
+                model.addAttribute(location.getName(), weather);
+            }
         } catch (SessionExpiredException | SessionNotFoundException e) {
             return "redirect:/user/sign-in";
         }
