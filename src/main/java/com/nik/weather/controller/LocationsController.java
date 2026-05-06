@@ -52,7 +52,7 @@ public class LocationsController {
     public String searchLocations(
             @CookieValue(value = "session_id", required = false) String sessionId,
             @RequestParam String cityName,
-                                  Model model) throws IOException, InterruptedException {
+                                  Model model) {
 
         if(sessionId == null) {
             return "redirect:/user/sign-in";
