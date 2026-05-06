@@ -45,7 +45,7 @@
                             <p class="card-text mb-1" th:text="'Country: ' + ${city.country}"></p>
                             <p class="card-text mb-3" th:text="'State: ' + ${city.state}"></p>
                             <div class="mt-auto">
-                                <form th:action="@{/home/locations}" method="post">
+                                <form th:action="@{/home/search}" method="post">
                                     <input type="hidden" name="name" th:value="${city.name}">
                                     <input type="hidden" name="latitude" th:value="${city.lat}">
                                     <input type="hidden" name="longitude" th:value="${city.lon}">
