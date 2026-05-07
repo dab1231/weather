@@ -43,6 +43,7 @@ public class LocationsController {
             }
             var session = sessionService.findById(UUID.fromString(sessionId));
             var user = session.getUser();
+            model.addAttribute("username", user.getLogin());
             var usersLocations = locationService.getUserLocations(user);
 
             var locationsWithWeather = new java.util.LinkedHashMap<Location, WeatherRespDto>();
