@@ -7,7 +7,7 @@
 
         <property name="connection.username">sa</property>
         <property name="connection.password">sa</property>
-        <property name="connection.url">jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1</property>
+        <property name="connection.url">jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL</property>
         <property name="connection.driver_class">org.h2.Driver</property>
 
         <!-- DB schema will be updated if needed -->
