@@ -7,6 +7,7 @@ import com.nik.weather.entity.User;
 import com.nik.weather.exception.SessionExpiredException;
 import com.nik.weather.exception.SessionNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,9 @@ public class SessionService {
 
     private final SessionDao sessionDao;
 
+    @Value("${session.duration.hours:24}")
+    private int sessionDurationHours;
+
     @Autowired
     public SessionService(SessionDao sessionDao) {
         this.sessionDao = sessionDao;
@@ -27,7 +31,7 @@ public class SessionService {
     public SessionEntity createSession(User user) {
         var session = SessionEntity.builder()
                 .user(user)
-                .expiresAt(LocalDateTime.now().plusHours(24))
+                .expiresAt(LocalDateTime.now().plusHours(sessionDurationHours))
                 .build();
         sessionDao.createSession(session);
         return session;
