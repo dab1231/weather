@@ -49,3 +49,5 @@ logs/
 *.env
 application-local.properties
 application-local.yml
+src/main/resources/application.properties
+src/test/resources/application.properties

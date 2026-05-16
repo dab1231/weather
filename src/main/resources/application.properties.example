@@ -1,0 +1,4 @@
+openweather.api.key=your_key_here
+db.url=your_url_here
+db.username=your_username_here
+db.password=your_pass_here
