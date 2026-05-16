@@ -3,10 +3,6 @@ package com.nik.weather.controller;
 import com.nik.weather.dto.request.LocationReqDto;
 import com.nik.weather.dto.response.WeatherRespDto;
 import com.nik.weather.entity.Location;
-import com.nik.weather.exception.LocationNotFoundException;
-import com.nik.weather.exception.SessionExpiredException;
-import com.nik.weather.exception.SessionNotFoundException;
-import com.nik.weather.exception.UnauthorizedAccessDeniedException;
 import com.nik.weather.service.LocationService;
 import com.nik.weather.service.SessionService;
 import com.nik.weather.service.WeatherService;
@@ -37,25 +33,21 @@ public class LocationsController {
             @CookieValue(value = "session_id", required = false) String sessionId,
             Model model) {
 
-        try {
-            if (sessionId == null) {
-                return "redirect:/user/sign-in";
-            }
-            var session = sessionService.findById(UUID.fromString(sessionId));
-            var user = session.getUser();
-            model.addAttribute("username", user.getLogin());
-            var usersLocations = locationService.getUserLocations(user);
-
-            var locationsWithWeather = new java.util.LinkedHashMap<Location, WeatherRespDto>();
-            for (Location location : usersLocations) {
-                var weather = weatherService.getWeather(location.getLatitude(), location.getLongitude());
-                locationsWithWeather.put(location, weather);
-            }
-            model.addAttribute("locations", locationsWithWeather);
-
-        } catch (SessionExpiredException | SessionNotFoundException e) {
+        if (sessionId == null) {
             return "redirect:/user/sign-in";
         }
+        var session = sessionService.findById(UUID.fromString(sessionId));
+        var user = session.getUser();
+        model.addAttribute("username", user.getLogin());
+        var usersLocations = locationService.getUserLocations(user);
+
+        var locationsWithWeather = new java.util.LinkedHashMap<Location, WeatherRespDto>();
+        for (Location location : usersLocations) {
+            var weather = weatherService.getWeather(location.getLatitude(), location.getLongitude());
+            locationsWithWeather.put(location, weather);
+        }
+        model.addAttribute("locations", locationsWithWeather);
+
         return "home";
     }
 
@@ -82,17 +74,10 @@ public class LocationsController {
             return "redirect:/user/sign-in";
         }
 
-        try {
-            var session = sessionService.findById(UUID.fromString(sessionId));
+        var session = sessionService.findById(UUID.fromString(sessionId));
+        var user = session.getUser();
+        locationService.addLocation(user, locationReqDto);
 
-            var user = session.getUser();
-            locationService.addLocation(user, locationReqDto);
-
-        } catch (SessionExpiredException | SessionNotFoundException e) {
-            return "redirect:/user/sign-in";
-        } catch (LocationNotFoundException e) {
-            return "redirect:/home";
-        }
         return "redirect:/home";
     }
 
@@ -104,15 +89,12 @@ public class LocationsController {
         if (sessionId == null) {
             return "redirect:/user/sign-in";
         }
-        try {
-            var session = sessionService.findById(UUID.fromString(sessionId));
-            var user = session.getUser();
-            var userLocation = locationService.getUserLocation(user, cityName);
-            locationService.deleteLocation(userLocation.getId(), user);
-            return "redirect:/home";
-        } catch (SessionExpiredException | SessionNotFoundException | UnauthorizedAccessDeniedException |
-                 LocationNotFoundException e) {
-            return "redirect:/user/sign-in";
-        }
+
+        var session = sessionService.findById(UUID.fromString(sessionId));
+        var user = session.getUser();
+        var userLocation = locationService.getUserLocation(user, cityName);
+        locationService.deleteLocation(userLocation.getId(), user);
+        return "redirect:/home";
+
     }
 }
