@@ -4,6 +4,7 @@ import com.nik.weather.dao.LocationDao;
 import com.nik.weather.dto.request.LocationReqDto;
 import com.nik.weather.entity.Location;
 import com.nik.weather.entity.User;
+import com.nik.weather.exception.LocationAlreadyExistsException;
 import com.nik.weather.exception.LocationNotFoundException;
 import com.nik.weather.exception.UnauthorizedAccessDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,10 @@ public class LocationService {
 
     @Transactional
     public void addLocation(User user, LocationReqDto locationReqDto) {
+
+        locationDao.findByUserAndName(user, locationReqDto.name())
+                .ifPresent(location -> { throw new LocationAlreadyExistsException(); });
+
         var location = Location.builder()
                 .name(locationReqDto.name())
                 .user(user)
@@ -57,6 +62,12 @@ public class LocationService {
 
     @Transactional
     public Location getUserLocation(User user, String cityName) {
-        return locationDao.findByUserAndName(user, cityName);
+        var maybeLocation = locationDao.findByUserAndName(user, cityName);
+        if (maybeLocation.isPresent()) {
+            return maybeLocation.get();
+        }
+        else {
+            throw new LocationNotFoundException();
+        }
     }
 }

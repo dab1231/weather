@@ -49,11 +49,11 @@ public class LocationDao {
     }
 
     @Transactional
-    public Location findByUserAndName(User user, String cityName) {
+    public Optional<Location> findByUserAndName(User user, String cityName) {
         var currentSession = sessionFactory.getCurrentSession();
-        return currentSession.createQuery("FROM Location WHERE user = :user AND name = :cityName", Location.class)
+        return Optional.ofNullable(currentSession.createQuery("FROM Location WHERE user = :user AND name = :cityName", Location.class)
                 .setParameter("user", user)
                 .setParameter("cityName", cityName)
-                .uniqueResult();
+                .uniqueResult());
     }
 }

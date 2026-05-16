@@ -84,10 +84,14 @@ public class LocationsController {
 
         try {
             var session = sessionService.findById(UUID.fromString(sessionId));
-            locationService.addLocation(session.getUser(), locationReqDto);
+
+            var user = session.getUser();
+            locationService.addLocation(user, locationReqDto);
 
         } catch (SessionExpiredException | SessionNotFoundException e) {
             return "redirect:/user/sign-in";
+        } catch (LocationNotFoundException e) {
+            return "redirect:/home";
         }
         return "redirect:/home";
     }
