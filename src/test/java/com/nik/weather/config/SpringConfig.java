@@ -3,6 +3,7 @@ package com.nik.weather.config;
 
 import com.google.gson.Gson;
 import org.flywaydb.core.Flyway;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.net.http.HttpClient;
 import java.util.Objects;
 
 @EnableTransactionManagement
@@ -69,5 +71,10 @@ public class SpringConfig {
     @Bean
     public Gson gson() {
         return  new Gson();
+    }
+
+    @Bean
+    public HttpClient httpClient() {
+        return Mockito.mock(HttpClient.class);
     }
 }

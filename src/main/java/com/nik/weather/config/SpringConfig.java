@@ -22,6 +22,7 @@ import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
 import javax.sql.DataSource;
+import java.net.http.HttpClient;
 import java.util.Objects;
 
 @EnableTransactionManagement
@@ -118,5 +119,10 @@ public class SpringConfig implements WebMvcConfigurer {
     @Bean
     public Gson gson() {
         return  new Gson();
+    }
+
+    @Bean
+    public HttpClient httpClient() {
+        return HttpClient.newHttpClient();
     }
 }

@@ -24,11 +24,12 @@ public class WeatherService {
     @Value("${openweather.api.key}")
     private String apiKey;
     private final Gson gson;
-    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final HttpClient httpClient;
 
     @Autowired
-    public WeatherService(Gson gson) {
+    public WeatherService(Gson gson, HttpClient httpClient) {
         this.gson = gson;
+        this.httpClient = httpClient;
     }
 
     public CitiesRespDto[] findCity(String cityName) {
