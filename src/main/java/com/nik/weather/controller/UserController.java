@@ -81,18 +81,14 @@ public class UserController {
     public String logOut(
             @CookieValue(value = "session_id", required = false) String sessionId) {
 
-        try {
-            if(sessionId == null) {
-                return "redirect:/user/sign-in";
-            }
-
-            var session = sessionService.findById(UUID.fromString(sessionId));
-            sessionService.deleteSession(
-                    new SessionReqDto(session.getId(), session.getExpiresAt())
-            );
-            return "redirect:/user/sign-in";
-        } catch (SessionExpiredException | SessionNotFoundException e) {
+        if(sessionId == null) {
             return "redirect:/user/sign-in";
         }
+
+        var session = sessionService.findById(UUID.fromString(sessionId));
+        sessionService.deleteSession(
+                new SessionReqDto(session.getId(), session.getExpiresAt())
+        );
+        return "redirect:/user/sign-in";
     }
 }
