@@ -39,8 +39,12 @@ public class WeatherService {
             var request = HttpRequest.newBuilder(
                     URI.create("http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=5&appid=" + apiKey)).build();
             var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            var respString = response.body();
 
+            if (response.statusCode() != 200) {
+                throw new WeatherApiException();
+            }
+
+            var respString = response.body();
             return gson.fromJson(respString, CitiesRespDto[].class);
 
         } catch (IOException | InterruptedException | JsonSyntaxException e) {
@@ -56,8 +60,11 @@ public class WeatherService {
             ).build();
 
             var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            var respString = response.body();
+            if (response.statusCode() != 200) {
+                throw new WeatherApiException();
+            }
 
+            var respString = response.body();
             return gson.fromJson(respString, WeatherRespDto.class);
         } catch (IOException | InterruptedException | JsonSyntaxException e) {
             throw new WeatherApiException();

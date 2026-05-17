@@ -36,4 +36,10 @@ public class GlobalExceptionHandler {
         return "error";
     }
 
+    @ExceptionHandler(WeatherApiException.class)
+    public String handleWeatherApiException(Model model) {
+        model.addAttribute("message", "Error with weather api");
+        return "error";
+    }
+
 }
