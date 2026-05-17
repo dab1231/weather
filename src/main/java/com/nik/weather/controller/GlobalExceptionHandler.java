@@ -42,4 +42,9 @@ public class GlobalExceptionHandler {
         return "error";
     }
 
+    @ExceptionHandler({InvalidPasswordException.class, InvalidLoginException.class})
+    public String handleInvalidCredentialsException() {
+        return "redirect:/user/sign-in";
+    }
+
 }
