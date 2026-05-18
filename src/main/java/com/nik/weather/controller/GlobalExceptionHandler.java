@@ -54,4 +54,13 @@ public class GlobalExceptionHandler {
         return "sign-up";
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public String handleIllegalArgumentException(IllegalArgumentException ex) {
+        if (ex.getMessage() != null && ex.getMessage().contains("Invalid UUID string")) {
+            return "redirect:/user/sign-in";
+        }
+        return "redirect:/home";
+    }
+
+
 }
