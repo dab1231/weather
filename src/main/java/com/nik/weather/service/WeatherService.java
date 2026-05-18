@@ -38,7 +38,7 @@ public class WeatherService {
             cityName = URLEncoder.encode(cityName, StandardCharsets.UTF_8);
             var request = HttpRequest.newBuilder(
                     URI.create("http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=5&appid=" + apiKey)).build();
-            var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
             if (response.statusCode() != 200) {
                 throw new WeatherApiException();
@@ -59,7 +59,7 @@ public class WeatherService {
                     URI.create("https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=metric")
             ).build();
 
-            var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             if (response.statusCode() != 200) {
                 throw new WeatherApiException();
             }
