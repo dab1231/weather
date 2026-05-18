@@ -23,6 +23,7 @@ import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
 import javax.sql.DataSource;
 import java.net.http.HttpClient;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 @EnableTransactionManagement
@@ -70,6 +71,7 @@ public class SpringConfig implements WebMvcConfigurer {
     public void configureViewResolvers(ViewResolverRegistry registry) {
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
         viewResolver.setTemplateEngine(templateEngine());
+        viewResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
         registry.viewResolver(viewResolver);
     }
 
