@@ -2,14 +2,12 @@ package com.nik.weather.controller;
 
 import com.nik.weather.dto.request.SessionReqDto;
 import com.nik.weather.dto.request.UserReqDto;
-import com.nik.weather.exception.*;
 import com.nik.weather.service.SessionService;
 import com.nik.weather.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -34,17 +32,11 @@ public class UserController {
 
     @PostMapping("/sign-up")
     public String signUp(@RequestParam String login,
-                         @RequestParam String password,
-                         Model model) {
+                         @RequestParam String password) {
 
         UserReqDto userReqDto = new UserReqDto(login, password);
-        try {
-            userService.registration(userReqDto);
-            return "redirect:/user/sign-in";
-        } catch (UserAlreadyExistsException e) {
-            model.addAttribute("error", "User already exists");
-            return "sign-up";
-        }
+        userService.registration(userReqDto);
+        return "redirect:/user/sign-in";
     }
 
     @GetMapping("/sign-in")
@@ -56,25 +48,16 @@ public class UserController {
     public String signIn(
             @RequestParam String login,
             @RequestParam String password,
-            HttpServletResponse httpServletResponse,
-            Model model) {
+            HttpServletResponse httpServletResponse) {
 
-        try {
-            UserReqDto userReqDto = new UserReqDto(login, password);
-            var sessionRespDto = userService.login(userReqDto);
-            var cookie = new Cookie("session_id", sessionRespDto.id().toString());
-            cookie.setMaxAge(24 * 60 * 60);
-            cookie.setPath("/");
-            cookie.setHttpOnly(true);
-            httpServletResponse.addCookie(cookie);
-            return "redirect:/home";
-        } catch (InvalidPasswordException e) {
-            model.addAttribute("error", "Invalid password");
-            return "sign-in";
-        } catch (InvalidLoginException e) {
-            model.addAttribute("error", "Invalid username");
-            return "sign-in";
-        }
+        UserReqDto userReqDto = new UserReqDto(login, password);
+        var sessionRespDto = userService.login(userReqDto);
+        var cookie = new Cookie("session_id", sessionRespDto.id().toString());
+        cookie.setMaxAge(24 * 60 * 60);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        httpServletResponse.addCookie(cookie);
+        return "redirect:/home";
     }
 
     @PostMapping("/sign-out")

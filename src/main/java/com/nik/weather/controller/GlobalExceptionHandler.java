@@ -43,8 +43,15 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({InvalidPasswordException.class, InvalidLoginException.class})
-    public String handleInvalidCredentialsException() {
-        return "redirect:/user/sign-in";
+    public String handleInvalidCredentialsException(Model model) {
+        model.addAttribute("error", "Invalid login or password, try again");
+        return "sign-in";
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public String handleUserAlreadyExistsException(Model model) {
+        model.addAttribute("error", "User already exists, choose another login");
+        return "sign-up";
     }
 
 }
