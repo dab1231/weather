@@ -28,14 +28,26 @@ public class UserService {
 
     @Transactional
     public void registration(UserReqDto userRegistrationReqDto) {
-        var maybeUser = userDao.findByLogin(userRegistrationReqDto.login());
+
+        var login = userRegistrationReqDto.login();
+        var password = userRegistrationReqDto.password();
+
+        if (login == null || login.length() < 3 || login.length() > 20 ||
+                !login.matches("[a-zA-Z0-9_.@-]+$")) {
+            throw new InvalidLoginException();
+        }
+
+        if (password == null || password.length() < 6 || password.length() > 30 ||
+                !password.matches("[a-zA-Z0-9_.@-]+$")) {
+            throw new InvalidPasswordException();
+        }
+
+        var maybeUser = userDao.findByLogin(login);
 
         if (maybeUser.isPresent()) {
             throw new UserAlreadyExistsException();
         }
 
-        String password = userRegistrationReqDto.password();
-        String login = userRegistrationReqDto.login();
         String hashPassword = passwordEncoder.encode(password);
 
         var user = User.builder()
@@ -48,19 +60,17 @@ public class UserService {
     @Transactional
     public SessionRespDto login(UserReqDto userReqDto) {
         var maybeUser = userDao.findByLogin(userReqDto.login());
-        if(maybeUser.isPresent()) {
+        if (maybeUser.isPresent()) {
             User userFromDB = maybeUser.get();
             boolean match = passwordEncoder.matches(userReqDto.password(), userFromDB.getPassword());
 
-            if(match) {
+            if (match) {
                 var session = sessionService.createSession(userFromDB);
                 return new SessionRespDto(session.getId(), session.getExpiresAt());
-            }
-            else{
+            } else {
                 throw new InvalidPasswordException();
             }
-        }
-        else {
+        } else {
             throw new InvalidLoginException();
         }
     }
