@@ -37,7 +37,7 @@ public class UserService {
             throw new InvalidLoginException();
         }
 
-        if (password == null || password.length() < 6 || password.length() > 30 ||
+        if (password == null || password.length() < 5 || password.length() > 30 ||
                 !password.matches("[a-zA-Z0-9_.@-]+$")) {
             throw new InvalidPasswordException();
         }

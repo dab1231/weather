@@ -1,6 +1,7 @@
 package com.nik.weather.controller;
 
 import com.nik.weather.dto.request.LocationReqDto;
+import com.nik.weather.dto.response.CitiesRespDto;
 import com.nik.weather.dto.response.WeatherRespDto;
 import com.nik.weather.entity.Location;
 import com.nik.weather.service.LocationService;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Controller
@@ -54,8 +56,12 @@ public class LocationsController {
     @GetMapping("/search")
     public String searchLocations(
             @CookieValue(value = "session_id", required = false) String sessionId,
-            @RequestParam String cityName,
+            @RequestParam(required = false) String cityName,
             Model model) {
+
+        if (cityName == null || cityName.isBlank()) {
+            return "redirect:/home";
+        }
 
         if (sessionId == null) {
             return "redirect:/user/sign-in";
@@ -74,11 +80,25 @@ public class LocationsController {
             return "redirect:/user/sign-in";
         }
 
-        var session = sessionService.findById(UUID.fromString(sessionId));
-        var user = session.getUser();
-        locationService.addLocation(user, locationReqDto);
+        var citiesRespDtos = weatherService.findCity(locationReqDto.name());
+        var name = locationReqDto.name();
+        var latitude = locationReqDto.latitude();
+        var longitude = locationReqDto.longitude();
+
+        for (CitiesRespDto citiesRespDto : citiesRespDtos) {
+            if (Objects.equals(name, citiesRespDto.getName()) &&
+                    Objects.equals(latitude, citiesRespDto.getLat()) &&
+                    Objects.equals(longitude, citiesRespDto.getLon())) {
+
+                var session = sessionService.findById(UUID.fromString(sessionId));
+                var user = session.getUser();
+                locationService.addLocation(user, locationReqDto);
+
+            }
+        }
 
         return "redirect:/home";
+
     }
 
     @PostMapping("/delete")
